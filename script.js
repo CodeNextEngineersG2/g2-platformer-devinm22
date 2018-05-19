@@ -56,10 +56,15 @@ function preload() {
   platformImageLast = loadImage("assets/img/tiles/Tile (16).png");
 
   // load player animations
-  playerIdleAnimation = loadAnimation("assets/img/kunoichi/Idle__000.png", "assets/img/kunoichi/Idle__009.png");
-  playerRunAnimation = loadAnimation("assets/img/kunoichi/Run__000.png", "assets/img/kunoichi/Run__009.png");
-  playerJumpAnimation = loadAnimation("assets/img/kunoichi/Jump__004.png");
-  playerFallAnimation = loadAnimation("assets/img/kunoichi/Jump__009.png");
+  // playerIdleAnimation = loadAnimation("assets/img/kunoichi/Idle__000.png", "assets/img/kunoichi/Idle__009.png");
+  // playerRunAnimation = loadAnimation("assets/img/kunoichi/Run__000.png", "assets/img/kunoichi/Run__009.png");
+  // playerJumpAnimation = loadAnimation("assets/img/kunoichi/Jump__004.png");
+  // playerFallAnimation = loadAnimation("assets/img/kunoichi/Jump__009.png");
+
+  playerIdleAnimation = loadAnimation("assets/img/zombie/Idle1.png", "assets/img/zombie/Idle15.png");
+  playerRunAnimation = loadAnimation("assets/img/zombie/Walk1.png", "assets/img/zombie/Walk10.png");
+  playerJumpAnimation = loadAnimation("assets/img/zombie/Attack (7).png");
+  playerFallAnimation = loadAnimation("assets/img/zombie/Dead (5).png");
 
   // load monster animations
   monsterWalkAnimation = loadAnimation("assets/img/monster/frame-1.png", "assets/img/monster/frame-10.png");
@@ -197,7 +202,7 @@ function applyGravity() {
 // occurs, a specific callback function is run.
 function checkCollisions() {
     player.collide(platforms, platformCollision);
-    monsters.collide(platforms, platformCollision); 
+    monsters.collide(platforms, platformCollision);
 }
 
 // Callback function that runs when the player or a monster collides with a
