@@ -116,7 +116,8 @@ function buildLevel() {
   // best method is to draw sprites from left to right on the screen
   createPlatform(50, 690, 5);
   createCollectable(300, 340);
-  createMonster(500, 600, 0);
+  createMonster(500, 600, -5);
+  createMonster(500, 600, -2);
 }
 
 // Creates a player sprite and adds animations and a collider to it
@@ -189,12 +190,16 @@ function applyGravity() {
     if(player.previousPosition.y !== player.position.y) {
       playerGrounded = false;
     }
+    else{
+      
+    }
     for(var i = 0; i < monsters.length; i++) {
       monsters[i].velocity.y += GRAVITY;
       if(monsters[i].position.y >= height) {
           monsters[i].remove();
       }
     }
+
 }
 
 // Called in the draw() function. Continuously checks for collisions and overlaps
@@ -203,6 +208,7 @@ function applyGravity() {
 function checkCollisions() {
     player.collide(platforms, platformCollision);
     monsters.collide(platforms, platformCollision);
+    player.collide(monsters, playerMonsterCollision);
 }
 
 // Callback function that runs when the player or a monster collides with a
@@ -219,11 +225,17 @@ function platformCollision(sprite, platform) {
         sprite.velocity.y = 0;
       }
     }
+
 }
 
 // Callback function that runs when the player collides with a monster.
 function playerMonsterCollision(player, monster) {
+  if(player.touching.bottom) {
 
+  }
+  else{
+    executeLoss();
+  }
 }
 
 // Callback function that runs when the player overlaps with a collectable.
