@@ -191,7 +191,7 @@ function applyGravity() {
       playerGrounded = false;
     }
     else{
-      
+
     }
     for(var i = 0; i < monsters.length; i++) {
       monsters[i].velocity.y += GRAVITY;
@@ -232,9 +232,11 @@ function platformCollision(sprite, platform) {
 function playerMonsterCollision(player, monster) {
   if(player.touching.bottom) {
 
-  }
-  else{
-    executeLoss();
+ else {
+   executeLoss();
+ }
+
+
   }
 }
 
@@ -315,6 +317,9 @@ function keyPressed() {
     player.velocity.y = currentJumpForce;
     millis = new Date();
   }
+  if(keyCode == "32" && playerGrounded) {
+    player.changeAnimation("slash");
+  }
 }
 
 // Check if the player has released the up arrow key. If the player's y velocity
@@ -370,5 +375,4 @@ function executeWin() {
 // a monster). Anything can happen here, but the most important thing is that we
 // call resetGame() after a short delay.
 function executeLoss() {
-
 }
