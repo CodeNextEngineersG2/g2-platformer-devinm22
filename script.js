@@ -26,7 +26,7 @@ var goalImage;
 // Physics Variables
 const GRAVITY = 0.5;
 const DEFAULT_VELOCITY = 5;
-const DEFAULT_JUMP_FORCE = -5;
+const DEFAULT_JUMP_FORCE = -6;
 var currentJumpForce;
 
 // Timing and Control Variables
@@ -79,7 +79,7 @@ function setup() {
   gameScreen = createCanvas(1280, 720);
   gameScreen.parent("#game-screen");
   backgroundImage.resize(width, height);
-  playerStartX = 50;
+  playerStartX = 200;
   playerStartY = 300;
   resetGame();
 }
@@ -114,11 +114,24 @@ function buildLevel() {
 
   // create platforms, monsters, and any other game objects
   // best method is to draw sprites from left to right on the screen
-  createPlatform(50, 690, 5);
-  createCollectable(300, 340);
-  createMonster(500, 600, -5);
-  createMonster(500, 600, -2);
+  createPlatform(100, 750, 5);
+  createCollectable(300, 390);
+  createMonster(500, 600, -0.5);
+  createPlatform(800, 675, 5);
+  createCollectable(1000, 390);
+  createMonster(550, 600, -0.5);
+  createMonster(600, 600, -0.5);
+  createPlatform(1500, 575, 2);
+  createMonster(900, 600, -0.5);
+  createPlatform(1900, 475, 5);
+  createMonster(2300, 400, -0.5);
+  createMonster(2450, 400, -0.5);
+  createMonster(20, 400, -0.5);
+  createMonster(2700, 350, -0.5);
+  createCollectable(2500, 300);
+  createPlatform(2600, 370, 2);
 }
+
 
 // Creates a player sprite and adds animations and a collider to it
 function createPlayer() {
@@ -186,21 +199,22 @@ function createCollectable(x, y) {
 // function calls executeLoss(). If a monster falls off the screen, it is
 // removed from the game.
 function applyGravity() {
-    player.velocity.y += GRAVITY;
-    if(player.previousPosition.y !== player.position.y) {
-      playerGrounded = false;
+  player.velocity.y += GRAVITY;
+  if(player.previousPosition.y !== player.position.y) {
+    playerGrounded = false;
+  }
+  if(player.position.y >= height){
+    executeLoss();
+  }
+  for(var i = 0; i < monsters.length; i++) {
+    monsters[i].velocity.y += GRAVITY;
+    if(monsters[i].position.y >= height) {
+      monsters[i].remove();
     }
-    else{
-
-    }
-    for(var i = 0; i < monsters.length; i++) {
-      monsters[i].velocity.y += GRAVITY;
-      if(monsters[i].position.y >= height) {
-          monsters[i].remove();
-      }
-    }
-
+  }
 }
+
+
 
 // Called in the draw() function. Continuously checks for collisions and overlaps
 // between all relevant game objects. Depending on the collision or overlap that
@@ -209,8 +223,8 @@ function checkCollisions() {
     player.collide(platforms, platformCollision);
     monsters.collide(platforms, platformCollision);
     player.collide(monsters, playerMonsterCollision);
-}
-
+    player.overlap(collectables, getCollectable);
+  }
 // Callback function that runs when the player or a monster collides with a
 // platform.
 function platformCollision(sprite, platform) {
@@ -230,25 +244,42 @@ function platformCollision(sprite, platform) {
 
 // Callback function that runs when the player collides with a monster.
 function playerMonsterCollision(player, monster) {
-  if(player.touching.bottom) {
 
- else {
-   executeLoss();
- }
-
-
-  }
+    if(player.touching.bottom) {
+monster.remove();
+var defeatedmonster = createSprite(monster.position.x, monster.position.y, 0, 0);
+defeatedmonster.addImage(monsterDefeatImage);
+defeatedmonster.mirrorX(monster.mirrorX());
+defeatedmonster.scale = 0.25;
+defeatedmonster.life = 40;
+currentJumpTime = MAX_JUMP_TIME;
+currentJumpForce = DEFAULT_JUMP_FORCE;
+player.velocity.y = currentJumpForce;
+millis = new Date();
+score++;
 }
+   else {
+     executeLoss();
+   }
+
+}
+
+
+
+
 
 // Callback function that runs when the player overlaps with a collectable.
 function getCollectable(player, collectable) {
-
+  if(player.touching){
+    collectable.remove();
+    score++
+  }
 }
 
 // Updates the player's position and current animation by calling
 // all of the relevant "check" functions below.
 function updatePlayer() {
-  //console.log("Player x: " + player.position.x + " Player y: " + player.position.y);
+  console.log("Player x: " + player.position.x + " Player y: " + player.position.y);
   checkIdle();
   checkFalling();
   checkJumping();
@@ -347,7 +378,7 @@ function keyTyped() {
 function updateDisplay() {
   // clear the screen
   background(0, 0, 0);
-
+  camera.position.x = player.position.x;
   // briefly turn camera off before setting any static images or text
   camera.off()
 
@@ -362,6 +393,18 @@ function updateDisplay() {
   // turn camera back on
   camera.on();
 
+  camera.position.x = player.position.x;
+
+  for(i = 0; i < collectables.length; i++){
+    collectables[i].rotation += 5;
+  }
+}
+function loadSounds(){
+  sound.play();
+  sound.loop();
+  sound.pause();
+  sound.setVolume();
+  sound.isPlaying();
 }
 
 // Called when the player has won the game (e.g., reached the goal at the end).
@@ -375,4 +418,6 @@ function executeWin() {
 // a monster). Anything can happen here, but the most important thing is that we
 // call resetGame() after a short delay.
 function executeLoss() {
+  noLoop();
+  setTimeout(resetGame, 1000);
 }
